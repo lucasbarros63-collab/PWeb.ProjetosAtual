@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand bg-dark border-bottom border-x sticky-top px-3">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <!-- Nome do Site -->
+        <a class="navbar-brand fw-bold text-light fs-4" href="/">✒️ Poetweet</a>
+
+        <!-- Campo de Pesquisa -->
+        <form class="d-flex w-50" action="/pesquisar" method="GET">
+            <div class="input-group">
+                <input class="form-control bg-black border-secondary text-light" type="search" name="q" placeholder="Buscar poemas ou autores...">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+
+        <!-- Dentro de views/partials/navbar.ejs -->
+<div>
+    <% if (usuarioLogado) { %>
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle fs-3 text-primary me-2"></i>
+                <span class="fw-bold"><%= usuarioLogado.nome %></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow">
+                <li><a class="dropdown-item text-danger" href="/logout">Sair</a></li>
+            </ul>
+        </div>
+    <% } else { %>
+        <!-- Link correto direcionando para /login -->
+        <a href="/login" class="btn btn-outline-light rounded-pill me-2">Entrar</a>
+        <a href="/cadastro" class="btn btn-primary rounded-pill fw-bold">Cadastrar</a>
+    <% } %>
+</div>
+    </div>
+</nav>

@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Poema Completo -->
+            <div class="card bg-dark text-light border-secondary p-3 mb-4">
+                <small class="text-secondary">Por: <strong><%= poema.autorNome %></strong></small>
+                <h3 class="text-info mt-2"><%= poema.titulo %></h3>
+                <p class="fs-5" style="white-space: pre-line; font-family: Georgia, serif;"><%= poema.conteudo %></p>
+            </div>
+
+            <!-- Formulário de Comentário -->
+            <h5 class="fw-bold mb-3">Comentários</h5>
+            <% if (usuarioLogado) { %>
+                <form action="/comentar/<%= poema.id %>" method="POST" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="texto" class="form-control bg-dark border-secondary text-light" placeholder="Escreva um comentário..." required>
+                        <button class="btn btn-primary fw-bold" type="submit">Comentar</button>
+                    </div>
+                </form>
+            <% } %>
+
+            <!-- Lista de Comentários com Nome Real -->
+            <% poema.comentarios.forEach(c => { %>
+                <div class="p-2 border-bottom border-secondary mb-2">
+                    <strong class="text-primary"><%= c.autorNome %>:</strong>
+                    <span class="text-light ms-1"><%= c.texto %></span>
+                </div>
+            <% }) %>
+            
+            <a href="/" class="btn btn-outline-secondary mt-3">← Voltar ao Feed</a>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

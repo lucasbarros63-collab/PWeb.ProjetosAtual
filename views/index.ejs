@@ -1,0 +1,95 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="container-fluid flex-grow-1">
+    <div class="row">
+        <!-- Sidebar Esquerda -->
+        <div class="col-2 col-md-3 px-0">
+            <%- include('partials/sidebar') %>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <main class="col-10 col-md-6 border-end border-x p-0">
+            
+            <!-- Cabeçalho com Botão Publique seu poema -->
+            <div class="p-3 border-bottom border-x bg-black d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">Página Inicial</h5>
+                <% if (usuarioLogado) { %>
+                    <button type="button" class="btn btn-primary rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#modalPoema">
+                        <i class="bi bi-feather me-1"></i> Publique seu poema
+                    </button>
+                <% } else { %>
+                    <a href="/login" class="btn btn-outline-primary rounded-pill btn-sm">Faça login para publicar</a>
+                <% } %>
+            </div>
+
+            <!-- Lista de Poemas -->
+            <% if (poemas.length === 0) { %>
+                <div class="p-4 text-center text-secondary">Nenhum poema encontrado.</div>
+            <% } %>
+
+            <% poemas.forEach(poema => { %>
+                <!-- Verifica se o usuário logado curtiu este poema -->
+                <% const jaCurtiu = usuarioLogado && poema.curtidasPor.includes(usuarioLogado.id); %>
+
+                <div class="p-3 border-bottom border-x">
+                    <div class="d-flex align-items-center mb-1">
+                        <i class="bi bi-person-circle fs-4 text-secondary me-2"></i>
+                        <strong class="text-light"><%= poema.autorNome %></strong>
+                    </div>
+                    <h5 class="text-info fs-6 mt-2"><%= poema.titulo %></h5>
+                    <p class="text-light" style="white-space: pre-line; font-family: Georgia, serif;"><%= poema.conteudo %></p>
+                    
+                    <!-- Ações: Curtir e Comentar -->
+                    <div class="d-flex gap-4 text-secondary mt-3">
+                        <form action="/curtir/<%= poema.id %>" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-link text-secondary p-0 text-decoration-none">
+                                <% if (jaCurtiu) { %>
+                                    <i class="bi bi-heart-fill text-danger me-1"></i>
+                                <% } else { %>
+                                    <i class="bi bi-heart text-danger me-1"></i>
+                                <% } %>
+                                <%= poema.curtidasPor.length %>
+                            </button>
+                        </form>
+                        <a href="/poema/<%= poema.id %>" class="text-secondary text-decoration-none">
+                            <i class="bi bi-chat me-1"></i> <%= poema.comentarios.length %> Comentários
+                        </a>
+                    </div>
+                </div>
+            <% }) %>
+        </main>
+    </div>
+</div>
+
+<!-- Modal para Publicar Poema -->
+<% if (usuarioLogado) { %>
+<div class="modal fade" id="modalPoema" tabindex="-1" aria-labelledby="modalPoemaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold" id="modalPoemaLabel">Escrever Poema</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form action="/publicar" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary">Título</label>
+                        <input type="text" name="titulo" class="form-control bg-black border-secondary text-light" placeholder="Título do poema" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary">Versos</label>
+                        <textarea name="conteudo" class="form-control bg-black border-secondary text-light" rows="5" placeholder="Escreva seus versos..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary rounded-pill fw-bold px-4">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<% } %>
+
+<%- include('partials/footer') %>
