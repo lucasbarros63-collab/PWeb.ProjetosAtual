@@ -2,18 +2,17 @@ const express = require('express');
 const session = require('express-session');
 const app = express();
 
-// Configurações do Express e EJS
+
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
-// Configuração de Sessão (Gerencia quem está logado)
+
 app.use(session({
     secret: 'chave-secreta-poesia',
     resave: false,
     saveUninitialized: true
 }));
 
-// --- "BANCO DE DADOS" EM MEMÓRIA ---
 const usuarios = []; // Guarda: { id, nome, email, senha }
 const poemas = [
     {
@@ -28,7 +27,6 @@ const poemas = [
     }
 ];
 
-// Middleware para passar o usuário logado para todas as telas (views)
 app.use((req, res, next) => {
     res.locals.usuarioLogado = req.session.usuario || null;
     next();
@@ -52,11 +50,11 @@ app.post('/cadastro', (req, res) => {
 });
 // Rota GET para exibir a tela de login
 app.get('/login', (req, res) => {
-    // Passa 'erro: null' para evitar erro de variável indefinida no EJS
+    
     res.render('login', { erro: null });
 });
 
-// Rota POST para processar o formulário de login
+// Rota POST para processar os dados do login
 app.post('/login', (req, res) => {
     const { email, senha } = req.body;
     const usuario = usuarios.find(u => u.email === email && u.senha === senha);
@@ -81,7 +79,7 @@ app.get('/', (req, res) => {
     res.render('index', { poemas });
 });
 
-// Rota de Pesquisa (Filtra por título, conteúdo ou autor)
+// Rota pra pesquisar autor, título do poema
 app.get('/pesquisar', (req, res) => {
     const termo = (req.query.q || '').toLowerCase();
     
@@ -111,7 +109,7 @@ app.post('/publicar', (req, res) => {
     res.redirect('/');
 });
 
-// Curtir / Descurtir (Somente 1 vez por usuário)
+// Possibilidade de curtir ou descurtir
 app.post('/curtir/:id', (req, res) => {
     if (!req.session.usuario) return res.redirect('/login');
 
@@ -132,7 +130,7 @@ app.post('/curtir/:id', (req, res) => {
     res.redirect('/');
 });
 
-// Visualizar um Poema e Comentários
+// Ver um Poema e Comentários
 app.get('/poema/:id', (req, res) => {
     const poema = poemas.find(p => p.id == req.params.id);
     if (!poema) return res.redirect('/');
